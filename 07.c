@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 
-const char *substrings[5] = {"the", "and", "or", "not", "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn"};
+char *substrings[5] = {"the", "and", "or", "not", "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn"};
 
 print_usage() {
     fprintf(stderr, "use: 07.exe FILE\n");
@@ -21,7 +21,8 @@ int count_substrings(char *sub, char *file, char *buffer) {
     int buffer_len = strlen(buffer); 
     int count = 0; 
     
-    for (int i = 0; i <= buffer_len - sub_len; i++) {
+	int i;
+    for (i = 0; i <= buffer_len - sub_len; i++) {
         int j; 
         for (j = 0; j < sub_len; j++) 
             if (buffer[i+j] != sub[j]) 
@@ -60,9 +61,11 @@ int main(int argc, char *argv[]) {
     if(pid == 0) {
         int my_substring = child_no-1;
         char buffer[1024];
-        printf("I am child no. %d (PID %d)\n    found \"%s\" %d times\n",
+		int niceness = nice(child_no * 2);
+        printf("I am child no. %d (PID %d, niceness %d)\n    found \"%s\" %d times\n",
             child_no,
             getpid(),
+			niceness,
             substrings[my_substring],
             count_substrings(substrings[my_substring], argv[1], buffer));
         
